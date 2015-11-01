@@ -1,0 +1,27 @@
+{
+  "name": "phaser-debug-layout",
+  "version": "1.0.0",
+  "description": "Debug your world layout in Phaser. Works for any view element.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/byondreal/phaser-debug-layout.git"
+  },
+  "keywords": [
+    "Phaser",
+    "debug",
+    "layout",
+    "console",
+    "children",
+    "hierarchy"
+  ],
+  "author": "ByondReal Dev <dev@byondreal.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/byondreal/phaser-debug-layout/issues"
+  },
+  "homepage": "https://github.com/byondreal/phaser-debug-layout#readme"
+}
