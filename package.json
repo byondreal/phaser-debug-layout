@@ -4,7 +4,8 @@
   "description": "Debug your world layout in Phaser. Works for any view element.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "git push && git push --tags && npm publish"
   },
   "repository": {
     "type": "git",
