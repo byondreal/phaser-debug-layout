@@ -3,27 +3,41 @@ if (!Phaser) {
   throw new Error('Phaser is a required dependency');
 }
 
-function logBounds(obj) {
-  console.log(obj.x, obj.y, obj.width, obj.height);
+function logCommon(obj, fields) {
+  Object.keys(fields).forEach(function (field) {
+    var logFunc = loggers[field] || function (obj) {
+      return obj[field];
+    };
+    console.log.apply(console, field, logFunc(obj));
+  });
 }
 
-function debugLayout(obj) {
+var loggers = {
+  bounds: function(obj) {
+    console.log('bounds', obj.x, obj.y, obj.width, obj.height);
+  }
+};
+
+function debugLayout(obj, opts) {
+  opts = opts || {};
+  opts.fields = opts.fields || {};
+
   if (Array.isArray(obj)) {
-    obj.forEach(debugLayout);
+    obj.forEach(debugLayout.bind(this, obj, opts));
   } else if (obj instanceof Phaser.Group) {
     console.groupCollapsed(obj.name);
-    logBounds(obj);
-    debugLayout(obj.children);
+    logCommon(obj, opts.fields);
+    debugLayout.call(this, obj.children, opts);
     console.groupEnd();
   } else if (obj instanceof Phaser.Sprite) {
     console.groupCollapsed(obj.key);
     console.log(obj.frameName);
-    logBounds(obj);
+    logCommon(obj, opts.fields);
     console.groupEnd();
   } else if (obj instanceof Phaser.Text) {
     console.groupCollapsed('Text');
     console.log(obj.text);
-    logBounds(obj);
+    logCommon(obj, opts.fields);
     console.groupEnd();
   } else if (obj instanceof Phaser.Button) {
     console.groupCollapsed(obj.key);
@@ -32,12 +46,13 @@ function debugLayout(obj) {
     } else {
       console.log(obj.key, obj.frameName);
     }
-    logBounds(obj);
+    logCommon(obj, opts.fields);
     console.groupEnd();
   } else if (obj instanceof Phaser.Graphics) {
     console.log('Graphic');
+    logCommon(obj, opts.fields);
   } else if (obj instanceof Phaser.Game) {
-    debugLayout(obj.world);
+    debugLayout.call(this, obj.world, opts);
   } else {
     throw new Error('Please provide valid game/view object');
   }
