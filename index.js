@@ -4,7 +4,7 @@ if (!Phaser) {
 }
 
 function logCommon(obj, fields) {
-  Object.keys(fields).forEach(function (field) {
+  (fields || []).forEach(function (field) {
     var logFunc = loggers[field] || function (obj) {
       return obj[field];
     };
@@ -20,7 +20,6 @@ var loggers = {
 
 function debugLayout(obj, opts) {
   opts = opts || {};
-  opts.fields = opts.fields || {};
 
   if (Array.isArray(obj)) {
     obj.forEach(debugLayout.bind(this, obj, opts));
