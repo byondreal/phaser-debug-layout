@@ -5,16 +5,16 @@ if (!Phaser) {
 
 function logCommon(obj, fields) {
   (fields || []).forEach(function (field) {
-    var logFunc = loggers[field] || function (obj) {
+    var logFunc = getters[field] || function (obj) {
       return obj[field];
     };
-    console.log.apply(console, field, logFunc(obj));
+    console.log.apply(console, [field].concat(logFunc(obj)));
   });
 }
 
-var loggers = {
+var getters = {
   bounds: function(obj) {
-    console.log('bounds', obj.x, obj.y, obj.width, obj.height);
+    return [obj.x, obj.y, obj.width, obj.height];
   }
 };
 
@@ -22,7 +22,9 @@ function debugLayout(obj, opts) {
   opts = opts || {};
 
   if (Array.isArray(obj)) {
-    obj.forEach(debugLayout.bind(this, obj, opts));
+    obj.forEach(function (child) {
+      debugLayout.call(this, child, opts);
+    }.bind(this));
   } else if (obj instanceof Phaser.Group) {
     console.groupCollapsed(obj.name);
     logCommon(obj, opts.fields);
