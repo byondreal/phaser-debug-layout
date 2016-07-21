@@ -59,5 +59,13 @@ function debugLayout(obj, opts) {
   }
 }
 
+debugLayout.create = function(game) {
+  return function (obj, opts) {
+    opts = opts || {};
+    opts.fields = opts.fields || ['bounds', 'visible', 'alpha'];
+    debugLayout(obj || (game && game.world), opts);
+  };
+};
+
 module.exports = debugLayout;
 
