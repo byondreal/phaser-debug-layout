@@ -9,7 +9,10 @@ function logCommon(obj, fields) {
       return;
     }
     var logFunc = getters[field] || function (obj) {
-      return obj[field];
+      var val = obj[field];
+      return typeof val === 'object' ?
+        val.toString() :
+        val;
     };
     console.log.apply(console, [field].concat(logFunc(obj)));
   });
