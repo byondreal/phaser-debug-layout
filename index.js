@@ -31,8 +31,8 @@ function debugLayout(obj, opts) {
   } else {
     console.groupCollapsed(
       (
-        obj.name ||
         (obj.childName && '.' + obj.childName) ||
+        obj.name ||
         (obj.frameName && ':' + obj.frameName) ||
         obj.key ||
         obj.text ||
