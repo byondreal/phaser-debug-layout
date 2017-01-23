@@ -5,6 +5,9 @@ if (!Phaser) {
 
 function logCommon(obj, fields) {
   (fields || []).forEach(function (field) {
+    if (!getters[field] && obj[field] === undefined) {
+      return;
+    }
     var logFunc = getters[field] || function (obj) {
       return obj[field];
     };
@@ -25,44 +28,42 @@ function debugLayout(obj, opts) {
     obj.forEach(function (child) {
       debugLayout.call(this, child, opts);
     }.bind(this));
-  } else if (obj instanceof Phaser.Group) {
-    console.groupCollapsed(obj.name);
-    logCommon(obj, opts.fields);
-    debugLayout.call(this, obj.children, opts);
-    console.groupEnd();
-  } else if (obj instanceof Phaser.Sprite) {
-    console.groupCollapsed(obj.key);
-    console.log(obj.frameName);
-    logCommon(obj, opts.fields);
-    console.groupEnd();
-  } else if (obj instanceof Phaser.Text) {
-    console.groupCollapsed('Text');
-    console.log(obj.text);
-    logCommon(obj, opts.fields);
-    console.groupEnd();
-  } else if (obj instanceof Phaser.Button) {
-    console.groupCollapsed(obj.key);
-    if (obj.betlineButton) {
-      console.log(obj.key, obj.betlineButton.name);
-    } else {
-      console.log(obj.key, obj.frameName);
-    }
-    logCommon(obj, opts.fields);
-    console.groupEnd();
-  } else if (obj instanceof Phaser.Graphics) {
-    console.log('Graphic');
-    logCommon(obj, opts.fields);
-  } else if (obj instanceof Phaser.Game) {
-    debugLayout.call(this, obj.world, opts);
   } else {
-    throw new Error('Please provide valid game/view object');
+    console.groupCollapsed(
+      (
+        obj.name ||
+        (obj.childName && '.' + obj.childName) ||
+        (obj.frameName && ':' + obj.frameName) ||
+        obj.key ||
+        obj.text ||
+        '-'
+      ) +
+      (
+        obj instanceof Phaser.Group ?
+          '' :
+          (
+            ' ' +
+            '(' +
+            Object.keys(Phaser).find(function(key) {
+              return typeof Phaser[key] === 'function' &&
+                obj instanceof Phaser[key]
+            }) +
+            ')'
+          )
+      )
+    );
+    logCommon(obj, opts.fields);
+    if (obj.children) {
+      debugLayout.call(this, obj.children, opts);
+    }
+    console.groupEnd();
   }
 }
 
 debugLayout.create = function(game) {
   return function (obj, opts) {
     opts = opts || {};
-    opts.fields = opts.fields || ['bounds', 'visible', 'alpha'];
+    opts.fields = opts.fields || ['bounds', 'visible', 'alpha', 'text'];
     debugLayout(obj || (game && game.world), opts);
   };
 };
